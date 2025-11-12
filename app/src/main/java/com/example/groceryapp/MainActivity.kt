@@ -3,6 +3,7 @@ package com.example.groceryapp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.example.groceryapp.ui.theme.GroceryAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,7 +46,27 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
+
+//    private val tokenRepository = TokenRepository()
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//
+//        lifecycleScope.launch {
+//            try {
+//                val clientId = "groceryappgwu-bbc93xfz"
+//                val clientSecret = "5MTS10Kh3lLSxZHr4a3Er70Ka0RA7MrQTFnWVMkI"
+//
+//                val token = tokenRepository.getToken(clientId, clientSecret)
+//                Log.d("KROGER_TOKEN", "$token")
+//
+//            } catch (e: Exception) {
+//                Log.e("KROGER_TOKEN", "Error fetching token")
+//            }
+//        }
+//    }
+
+}
 
 @Composable
 fun LoginActivity(modifier: Modifier) {
@@ -110,6 +133,7 @@ fun LoginActivity(modifier: Modifier) {
 fun checkUsernamePassword(username: String, password: String): Boolean{
     return username.length >= 5 && password.length >= 8
 }
+
 
 @Preview(showBackground = true)
 @Composable

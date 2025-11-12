@@ -1,5 +1,7 @@
 package com.example.groceryapp
 
+import android.util.Base64
+import android.util.Log
 import retrofit2.http.*
 
 data class TokenResponse(
@@ -25,7 +27,7 @@ interface KrogerApiService {
         @Header("Authorization") authHeader: String
     ): StoresResponse
 
-    // get product information using retro fit
+     get product information using retro fit
     @GET("v1/products")
     suspend fun getProducts(
         @Query("filter.term") searchTerm: String,
@@ -43,7 +45,7 @@ class TokenRepository {
         cachedToken?.let { return it }
 
         val credentials = "$clientId:$clientSecret"
-        val encoded = android.util.Base64.encodeToString(credentials.toByteArray(), android.util.Base64.NO_WRAP)
+        val encoded = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
         val authHeader = "Basic $encoded"
 
         val response = api.getAccessToken(authHeader)
