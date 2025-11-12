@@ -41,8 +41,8 @@ class HomeActivity : ComponentActivity() {
             GroceryAppTheme {
                 HomeScreen(
                     groceryLists = sampleLists,
-                    onListClick = { /* TODO: navigate to ListActivity */ },
-                    onAddList = { /* TODO: open Add List dialog */ },
+                    onListClick = { /* TODO: launch ListActivity */ },
+                    onAddList = { /* TODO: open Add List popup */ },
                     onNavigate = { /* TODO: handle bottom nav click */ }
                 )
             }
