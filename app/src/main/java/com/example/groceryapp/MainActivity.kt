@@ -46,26 +46,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-//    private val tokenRepository = TokenRepository()
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        lifecycleScope.launch {
-//            try {
-//                val clientId = "groceryappgwu-bbc93xfz"
-//                val clientSecret = "5MTS10Kh3lLSxZHr4a3Er70Ka0RA7MrQTFnWVMkI"
-//
-//                val token = tokenRepository.getToken(clientId, clientSecret)
-//                Log.d("KROGER_TOKEN", "$token")
-//
-//            } catch (e: Exception) {
-//                Log.e("KROGER_TOKEN", "Error fetching token")
-//            }
-//        }
-//    }
-
 }
 
 @Composable

@@ -1,6 +1,10 @@
 package com.example.groceryapp
 
-class ProductList(
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class ProductList(
     val title: String,
-    val cost: String
-)
+    val cost: Double
+): Parcelable

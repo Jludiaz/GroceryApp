@@ -1,5 +1,6 @@
 package com.example.groceryapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,9 +16,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,9 +42,14 @@ class HomeActivity : ComponentActivity() {
             )
 
             GroceryAppTheme {
+                val context = LocalContext.current
                 HomeScreen(
                     groceryLists = sampleLists,
-                    onListClick = { /* TODO: launch ListActivity */ },
+                    onListClick = { list ->
+                        val intent = Intent(context, ListActivity::class.java)
+                        intent.putExtra("selectedList", list)   // Pass list
+                        context.startActivity(intent)
+                    },
                     onAddList = { /* TODO: open Add List popup */ },
                     onNavigate = { /* TODO: handle bottom nav click */ }
                 )
@@ -50,6 +58,7 @@ class HomeActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     groceryLists: List<GroceryList>,
@@ -58,6 +67,17 @@ fun HomeScreen(
     onNavigate: (String) -> Unit
 ) {
     Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = Color(0xFFF9F9F9),
+                    titleContentColor = Color(0xFF6cb3e6),
+                ),
+                title = {
+                    Text("INSERT SEARCH BAR")
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddList,
@@ -91,6 +111,10 @@ fun HomeScreen(
 
 @Composable
 fun GroceryListCard(list: GroceryList, onClick: () -> Unit) {
+    val context = LocalContext.current
+    val currentListTitle = null
+    val currentListCost = null
+
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -156,6 +180,7 @@ fun BottomNavigationBar(onNavigate: (String) -> Unit) {
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

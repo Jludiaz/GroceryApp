@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,16 +38,33 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.groceryapp.ui.theme.GroceryAppTheme
 
 class ListActivity : ComponentActivity() {
+    private val viewModel: ListViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val groceryList = intent.getParcelableExtra<GroceryList>("list") ?: return
+
+        // Code by ChatGPT to
+        val viewModel: ListViewModel by viewModels {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return ListViewModel(groceryList) as T
+                }
+            }
+        }
+
         setContent {
             GroceryAppTheme {
                 DisplayList(
-                    onAddList = { /* TODO: open Add List popup */ },
+                    viewModel = viewModel,
                     onNavigate = { /* TODO: handle bottom nav click */ }
                 )
             }
@@ -57,9 +75,11 @@ class ListActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayList(
-    onAddList: () -> Unit,
+    viewModel: ListViewModel,
     onNavigate: (String) -> Unit
 ){
+    val items = viewModel.items
+    val totalCost = viewModel.totalCost()
 
     Scaffold (
         topBar = {
@@ -69,7 +89,7 @@ fun DisplayList(
                     titleContentColor = Color(0xFF6cb3e6),
                 ),
                 title = {
-                    Text("Top app bar")
+                    Text("${viewModel.title}")
                 }
             )
         },
@@ -78,35 +98,32 @@ fun DisplayList(
         },
         containerColor = Color(0xFFF9F9F9) // off white background
     ){ innerPadding ->
-        val textFieldState = rememberTextFieldState() //Search query state
-        val searchResultsList: MutableList<String> = mutableListOf("Dog", "Cat", "Bird") //Fake list of results
+        Column(Modifier.padding(innerPadding)) {
 
-        SimpleSearchBar(
-            textFieldState = textFieldState,
-            onSearch = {/* search API here */ },
-            searchResults = searchResultsList,
-            modifier = Modifier.padding(top = 30.dp)
-        )
+            // Show total cost
+            Text(
+                text = "Total: $${"%.2f".format(totalCost)}",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(16.dp)
+            )
 
-        var selectedItem by remember { mutableStateOf<String?>(null) }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 60.dp),
-            contentPadding = innerPadding
-        ) {
-            items(searchResultsList) { resultItem ->
-                val isSelected = resultItem == selectedItem
-                ListItem(
-                    headlineContent = { Text(resultItem) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    colors = ListItemDefaults.colors(
-                        containerColor = if (isSelected) Color(0xFF4CAF50) else Color(0xFFF5F5F5), // green if selected, gray if not
-                        headlineColor = if (isSelected) Color(0xFFFFFFFF) else Color(0xFF000000)
+            LazyColumn {
+                items(items) { item ->
+
+                    ListItem(
+                        headlineContent = { Text(item.title) },
+                        supportingContent = { Text("$${item.cost}") },
+                        trailingContent = {
+                            IconButton(onClick = { viewModel.removeItem(item) }) {
+                                Icon(
+                                    painterResource(R.drawable.ic_launcher_background),
+                                    contentDescription = "Remove"
+                                )
+                            }
+                        }
                     )
-                )
+                }
             }
         }
     }
@@ -170,11 +187,25 @@ fun SimpleSearchBar(
 
 @Preview(showBackground = true)
 @Composable
-fun ListActivityPreview(){
+fun ListActivityPreview() {
+    // Create a sample GroceryList
+    val sampleGroceryList = GroceryList(
+        title = "Sample Grocery List",
+        description = "This is a preview list",
+        items = listOf(
+            ProductList("Example Item", 1.99),
+            ProductList("Another Item", 3.49)
+        ),
+        totalCost = "20"
+    )
+
+    // Pass the GroceryList to the ViewModel
+    val vm = ListViewModel(sampleGroceryList)
+
     GroceryAppTheme {
         DisplayList(
-            onAddList = { /* TODO: open Add List popup */ },
-            onNavigate = { /* TODO: handle bottom nav click */ }
+            viewModel = vm,
+            onNavigate = {}
         )
     }
 }

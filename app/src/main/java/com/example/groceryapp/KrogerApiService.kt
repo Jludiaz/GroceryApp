@@ -25,15 +25,15 @@ interface KrogerApiService {
     suspend fun getStores(
         @Query("filter.zipCode.near") zipCode: String,
         @Header("Authorization") authHeader: String
-    ): StoresResponse
+    ): KrogerResponse.StoresResponse
 
-     get product information using retro fit
+//     get product information using retro fit
     @GET("v1/products")
     suspend fun getProducts(
         @Query("filter.term") searchTerm: String,
         @Query("filter.locationId") locationId: String,
         @Header("Authorization") authHeader: String
-    ): ProductsResponse
+    ): KrogerResponse.ProductsResponse
 }
 
 // handle token get(er) (created by chat GPT)
